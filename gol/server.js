@@ -1,3 +1,8 @@
+const Grass = require('./grass');
+const Grazer = require('./grazer');
+const Predator = require('./predator');
+
+
 let matrix = [
     [0, 0, 1, 0, 0],
     [1, 0, 0, 0, 0],
@@ -49,15 +54,9 @@ function createMoreCreatures() {
     }
 }
 
-// einmal bei Programmstart
-function setup() {
-    matrix = getRandomMatrix(50, 50);
-    createMoreCreatures();
-
-    createCanvas(matrix[0].length * side + 1, matrix.length * side + 1);
-    background('#acacac');
-    frameRate(fr);
-
+function initGame() {
+    // matrix = getRandomMatrix(50, 50);
+    // createMoreCreatures();
     for (let y = 0; y < matrix.length; y++) {
         for (let x = 0; x < matrix[y].length; x++) {
             if (matrix[y][x] == 1) {
@@ -73,39 +72,11 @@ function setup() {
 
 }
 
-// wiederholend
-function draw() {
-
-    //update von Grass-Lebewesen
-    for (let i = 0; i < grassArr.length; i++) {
-        grassArr[i].mul();
-    }
-
-    for (let i = 0; i < grazerArr.length; i++) {
-        grazerArr[i].eat();
-    }
-
-    for (let i = 0; i < predArr.length; i++) {
-        predArr[i].eat();
-        
-    }
-
-    for (let y = 0; y < matrix.length; y++) {
-        for (let x = 0; x < matrix[y].length; x++) {
-            // fill('white');
-            // if (matrix[y][x] == 1) {
-            //     fill("#28764F")
-            // } else if (matrix[y][x] == 2) {
-            //     fill('#DB960B')
-            // } else if (matrix[y][x] == 3) {
-            //     fill('#961707')
-            // }
-            //rect(x * side, y * side, side, side);
-            console.log(matrix);
-        }
-    }
 
 
+initGame();
+console.log(grazerArr);
 
-}
-
+setInterval(function(){
+    updateGame(); // ehemals draw
+}, 1000);
