@@ -1,4 +1,6 @@
 const LivingCreature = require('./livingCreature');
+const myFuncs = require('./functions');
+const random = require('./utils');
 module.exports = class Grazer extends LivingCreature{
     constructor(x, y) {
         super(x,y);
@@ -39,7 +41,7 @@ module.exports = class Grazer extends LivingCreature{
         if (fields.length > 0) {
             let pos = random(fields);
             this.updateGameAndPos(pos[0], pos[1]);
-            removeFromList(this, grassArr); // Gras löschen
+            myFuncs.removeFromList(this, grassArr); // Gras löschen
 
             this.eatCount++;
             this.notEaten = 0;
@@ -67,12 +69,12 @@ module.exports = class Grazer extends LivingCreature{
 
     die() {
         matrix[this.y][this.x] = 0;
-        removeFromList(this, grazerArr);
+        myFuncs.removeFromList(this, grazerArr);
     }
 
     mul() {
         if (this.eatCount >= 5) {
-            let pos = findRandomPosFor(this, 0);
+            let pos = myFuncs.findRandomPosFor(this, 0);
             if (pos !== undefined) {
                 grazerArr.push(new Grazer(pos[0], pos[1]));
                 matrix[pos[1]][pos[0]] = this.colorValue;
