@@ -2,6 +2,15 @@ const Grass = require('./grass');
 const Grazer = require('./grazer');
 const Predator = require('./predator');
 
+const express = require('express');
+const app = express();
+let server = require('http').Server(app);
+const io = require('socket.io')(server);
+
+app.use(express.static('./'));
+app.get('/', function(req, res){
+    res.redirect('client.html');
+})
 
 matrix = [
     [0, 0, 1, 0, 0],
@@ -12,7 +21,6 @@ matrix = [
     [1, 1, 0, 2, 0],
     [1, 1, 0, 0, 0]
 ];
-
 
 let fr = 3;
 let side = 10;
@@ -44,10 +52,10 @@ function createMoreCreatures() {
         for (let x = 0; x < matrix[y].length; x++) {
             if (x == y) {
                 matrix[y][x] = 2;
-                if(y+2 < matrix.length && x+2 < matrix[0].length)
-                matrix[y+2][x+2] = 2;
+                if (y + 2 < matrix.length && x + 2 < matrix[0].length)
+                    matrix[y + 2][x + 2] = 2;
             }
-            if(x+y == matrix.length-1){
+            if (x + y == matrix.length - 1) {
                 matrix[y][x] = 3;
             }
         }
@@ -73,7 +81,7 @@ function initGame() {
     console.log(matrix);
 }
 
-function updateGame(){
+function updateGame() {
     console.log("update Game...")
 
     for (let i = 0; i < grassArr.length; i++) {
@@ -86,7 +94,7 @@ function updateGame(){
 
     for (let i = 0; i < predArr.length; i++) {
         predArr[i].eat();
-        
+
     }
 
     for (let y = 0; y < matrix.length; y++) {
@@ -100,7 +108,7 @@ function updateGame(){
             //     fill('#961707')
             // }
             //rect(x * side, y * side, side, side);
-            console.log(matrix);
+            // console.log(matrix);
         }
     }
 }
@@ -108,9 +116,14 @@ function updateGame(){
 ////////////////////////////////////////
 // Spiel auf Server starten
 //////////////////////////////////////
-initGame();
-// console.log(grazerArr);
 
-setInterval(function(){
-    updateGame(); // ehemals draw
-}, 1000);
+
+server.listen(3000, function () {
+    console.log("Server wurde gestartet und hört auf Port 3000.");
+    
+    initGame();
+    // console.log(grazerArr);
+    setInterval(function () {
+        updateGame(); // ehemals draw
+    }, 1000);
+})
