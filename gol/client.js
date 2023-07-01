@@ -1,19 +1,34 @@
 function main (){
     console.log("main is executed...");
     const socket = io();
-
-    //callback
+    //Callbacks festlegen für Infos vom Server
     function openMatrix (matrixData){
-        // zeichne diese Matrix
-        matrix = matrixData;  
+        // speichere diese Matrix
+        matrix = matrixData;   
     }
-    socket.on('send matrix', openMatrix)
+
+    function initMatrix(matrixData){
+        matrix = matrixData;
+        resizeCanvas(matrix[0].length * side + 1, matrix.length * side + 1)
+    }
+    socket.on('send matrix', openMatrix);
+    socket.on('init matrix', initMatrix);
+
+    // Callbacks für Klick Events
+    function killAll(){
+        // sende Nachricht an Server
+        console.log("sende kill all an server..");
+        socket.emit('kill all', 'Grazer')
+    }
+    let btn = document.getElementById('myGameBtn');
+    btn.onclick = killAll;
 }
 
 main();
 
+// Spieldaten und Zeichnen mit p5.js
 let matrix = [];
-let side = 50;
+let side = 20;
 let fr = 5;
 function setup(){
     // createCanvas(matrix[0].length * side + 1, matrix.length * side + 1);

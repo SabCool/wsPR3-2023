@@ -100,36 +100,52 @@ function updateGame() {
 
     for (let y = 0; y < matrix.length; y++) {
         for (let x = 0; x < matrix[y].length; x++) {
-
             // console.log(matrix);
         }
     }
 }
 
+function killAll(data) {
+    console.log("Client EVENT erhalten: ", data);
+    // spiellogik alle Lebewesen löschen
+    for (let y = 0; y < matrix.length; y++) {
+        for (let x = 0; x < matrix[y].length; x++) {
+            matrix[y][x] = 0;
+        }
+    }
+    grassArr = [];
+    grazerArr = [];
+    predArr = [];
+
+}
+
 ////////////////////////////////////////
 // Spiel auf Server starten
 //////////////////////////////////////
-
+let myInterval = null;
 
 server.listen(3000, function () {
     console.log("Server wurde gestartet und hört auf Port 3000.");
-
-
 })
 
 io.on('connection', function (socket) {
     console.log('ws connection established...', io.engine.clientsCount);
 
-    
-
-    // Spiel start
+    // Spiel starten sobald 1. Client verbunden
     if (io.engine.clientsCount === 1) {
         initGame();
-        setInterval(function () {
+        socket.emit('init matrix', matrix);
+        // starte game loop
+        myInterval = setInterval(function () {
             updateGame();
             console.log('send matrix');
             io.sockets.emit('send matrix', matrix);
         }, 1000);
+    } else {
+        // init wenn weitere clients sich verbinden
+        socket.emit('init matrix', matrix);
     }
 
+    // Definition von callbacks für client-Infos
+    socket.on('kill all', killAll);
 })
