@@ -3,12 +3,13 @@ const Grazer = require('./grazer');
 const Predator = require('./predator');
 
 const express = require('express');
+const { SocketAddress } = require('net');
 const app = express();
 let server = require('http').Server(app);
 const io = require('socket.io')(server);
 
 app.use(express.static('./'));
-app.get('/', function(req, res){
+app.get('/', function (req, res) {
     res.redirect('client.html');
 })
 
@@ -99,15 +100,7 @@ function updateGame() {
 
     for (let y = 0; y < matrix.length; y++) {
         for (let x = 0; x < matrix[y].length; x++) {
-            // fill('white');
-            // if (matrix[y][x] == 1) {
-            //     fill("#28764F")
-            // } else if (matrix[y][x] == 2) {
-            //     fill('#DB960B')
-            // } else if (matrix[y][x] == 3) {
-            //     fill('#961707')
-            // }
-            //rect(x * side, y * side, side, side);
+
             // console.log(matrix);
         }
     }
@@ -120,10 +113,23 @@ function updateGame() {
 
 server.listen(3000, function () {
     console.log("Server wurde gestartet und hört auf Port 3000.");
+
+
+})
+
+io.on('connection', function (socket) {
+    console.log('ws connection established...', io.engine.clientsCount);
+
     
-    initGame();
-    // console.log(grazerArr);
-    setInterval(function () {
-        updateGame(); // ehemals draw
-    }, 1000);
+
+    // Spiel start
+    if (io.engine.clientsCount === 1) {
+        initGame();
+        setInterval(function () {
+            updateGame();
+            console.log('send matrix');
+            io.sockets.emit('send matrix', matrix);
+        }, 1000);
+    }
+
 })
